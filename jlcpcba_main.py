@@ -202,11 +202,17 @@ def create_pcba():
     botfh.write("Designator,Val,Package,Mid X,Mid Y,Rotation,Layer\n")
 
     for m in board.GetModules():
+        if not m.GetPath() or m.GetPath().isspace():
+            continue
+
         #uid = m.GetPath().replace('/', '')
 	# Need to just pull out the non-zero part at the end
-	uid = m.GetPath().AsString().lower()
-	while (uid[0] in "0/-"):
-		uid = uid[1:]
+        if isinstance(m.GetPath(), str):
+            uid = m.GetPath().lower()
+        else:
+            uid = m.GetPath().AsString().lower()
+        while (uid[0] in "0/-"):
+                uid = uid[1:]
 
         smd = ((m.GetAttributes() & pcbnew.MOD_CMS) == pcbnew.MOD_CMS)
         x = m.GetPosition().x/1000000.0
